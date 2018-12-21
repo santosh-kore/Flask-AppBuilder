@@ -208,6 +208,24 @@ class BaseSecurityManager(AbstractSecurityManager):
             self.oauth_remotes = dict()
             for _provider in self.oauth_providers:
                 provider_name = _provider['name']
+                if provider['name'] == 'Zalando':
+                    credentials_dir = env.get('CREDENTIALS_DIR', '')
+                    credentials_file = os.path.join(credentials_dir, 'client.json')
+                    
+                with open(credentials_file) as fd:
+                    client_credentials = json.load(fd)
+                    SUPERSET_OAUTH_CONSUMER_KEY = client_credentials['client_id']
+                    SUPERSET_OAUTH_CONSUMER_SECRET = client_credentials['client_secret']
+                    
+                log.debug(f"{Before: '*' * 100}")
+                log.debug(provider)
+                          
+                provider['remote_app']['consumer_key'] = SUPERSET_OAUTH_CONSUMER_KEY
+                provider['remote_app']['consumer_secret'] = SUPERSET_OAUTH_CONSUMER_SECRET
+
+                log.debug(f"{After: '*' * 100}")
+                log.debug(provider)
+
                 log.debug("OAuth providers init {0}".format(provider_name))
                 obj_provider = self.oauth.remote_app(provider_name, **_provider['remote_app'])
                 obj_provider._tokengetter = self.oauth_tokengetter
