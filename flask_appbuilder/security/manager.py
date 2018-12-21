@@ -208,7 +208,7 @@ class BaseSecurityManager(AbstractSecurityManager):
             self.oauth_remotes = dict()
             for _provider in self.oauth_providers:
                 provider_name = _provider['name']
-                if provider['name'] == 'Zalando':
+                if provider_name == 'Zalando':
                     credentials_dir = env.get('CREDENTIALS_DIR', '')
                     credentials_file = os.path.join(credentials_dir, 'client.json')
                     
